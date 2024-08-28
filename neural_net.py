@@ -40,12 +40,13 @@ if __name__ == "__main__":
 
     print("Weights after training:", neural_network.synaptic_weights)
 
-    A = float(input("Input 1: "))
-    B = float(input("Input 2: "))
-    C = float(input("Input 3: "))
+    while True:
+        A = float(input("Input 1: "))
+        B = float(input("Input 2: "))
+        C = float(input("Input 3: "))
 
-    print("Considering new situation:", A, B, C)
-    print("Output:", neural_network.think(np.array([A, B, C])))
+        print("Considering new situation:", A, B, C)
+        print("Output:", neural_network.think(np.array([A, B, C])))
 
 
     
