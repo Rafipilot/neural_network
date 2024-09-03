@@ -23,16 +23,13 @@ training_outputs = np.array([[1, 0, 0, 0],  # Horizontal line
                             [0, 1, 0, 0],  # Vertical line
                             [0, 0, 1, 0],  # Diagonal line
                             [0, 0, 0, 1]]) # No pattern
-if "neural_network" not in st.session_state:
-    st.session_state.neural_network = NeuralNetwork(training_inputs, training_outputs)
 
-print("Random starting weights:", st.session_state.neural_network.synaptic_weights)
-print("Random starting bias:", st.session_state.neural_network.bias)
+q = 4
+if "neural_network" not in st.session_state:
+    st.session_state.neural_network = NeuralNetwork(training_inputs, training_outputs, q)
+
 
 st.session_state.neural_network.train(training_inputs, training_outputs, 20000)
-
-print("Weights after training:", st.session_state.neural_network.synaptic_weights)
-print("Bias after training:", st.session_state.neural_network.bias)
 
 # Create a more user-friendly 2x2 grid using checkboxes
 st.write("Draw the input image by checking the boxes below:")

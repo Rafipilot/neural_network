@@ -3,16 +3,17 @@ import matplotlib.pyplot as plt
 
 class NeuralNetwork():
     
-    def __init__(self, input, output):
-
-
+    def __init__(self, input, output, q):
         x, input_size = np.shape(input)
         y, output_size = np.shape(output)
-
+        
         np.random.seed(1)
         # Initialize weights randomly with mean 0
-        self.synaptic_weights = 2 * np.random.random((input_size, output_size)) - 1
-        self.bias = np.zeros(output_size)  # Adding a bias term for each output neuron
+        self.weights_input_hidden = 2 * np.random.random((input_size, q)) - 1  # Weights between input and hidden layer
+        self.weights_hidden_output = 2 * np.random.random((q, output_size)) - 1  # Weights between hidden and output layer
+        
+        self.bias_hidden = np.zeros(q)  # Bias for hidden layer
+        self.bias_output = np.zeros(output_size)  # Bias for output layer
 
     def sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
@@ -24,14 +25,25 @@ class NeuralNetwork():
         errors = []
 
         for i in range(iterations):
-            output = self.think(training_inputs)
-            error = training_outputs - output
+            # Forward pass
+            hidden_output = self.sigmoid(np.dot(training_inputs, self.weights_input_hidden) + self.bias_hidden)
+            final_output = self.sigmoid(np.dot(hidden_output, self.weights_hidden_output) + self.bias_output)
+            
+            # Calculate error
+            error = training_outputs - final_output
             errors.append(np.mean(np.abs(error)))
 
-            # Calculate the adjustments
-            adjustments = np.dot(training_inputs.T, error * self.sigmoid_derivative(output))
-            self.synaptic_weights += adjustments
-            self.bias += np.sum(error * self.sigmoid_derivative(output), axis=0)
+            # Backward pass
+            final_output_delta = error * self.sigmoid_derivative(final_output)
+            hidden_output_error = final_output_delta.dot(self.weights_hidden_output.T)
+            hidden_output_delta = hidden_output_error * self.sigmoid_derivative(hidden_output)
+            
+            # Update weights and biases
+            self.weights_hidden_output += hidden_output.T.dot(final_output_delta)
+            self.weights_input_hidden += training_inputs.T.dot(hidden_output_delta)
+            
+            self.bias_output += np.sum(final_output_delta, axis=0)
+            self.bias_hidden += np.sum(hidden_output_delta, axis=0)
 
         # Plot the error over time after training
         plt.plot(errors)
@@ -42,7 +54,9 @@ class NeuralNetwork():
 
     def think(self, inputs):
         inputs = inputs.astype(float)
-        return self.sigmoid(np.dot(inputs, self.synaptic_weights) + self.bias)
+        hidden_output = self.sigmoid(np.dot(inputs, self.weights_input_hidden) + self.bias_hidden)
+        final_output = self.sigmoid(np.dot(hidden_output, self.weights_hidden_output) + self.bias_output)
+        return final_output
 
 
     
