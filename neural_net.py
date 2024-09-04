@@ -9,19 +9,21 @@ class NeuralNetwork():
         
         np.random.seed(1)
         # Initialize weights randomly with mean 0
-        self.weights_input_hidden = 2 * np.random.random((input_size, q)) - 1  # Weights between input and hidden layer
-        self.weights_hidden_output = 2 * np.random.random((q, output_size)) - 1  # Weights between hidden and output layer
+        self.weights_input_hidden = np.random.randn(input_size, q) * np.sqrt(1. / input_size)
+        self.weights_hidden_output = np.random.randn(q, output_size) * np.sqrt(1. / q)
+  # Weights between hidden and output layer
         
         self.bias_hidden = np.zeros(q)  # Bias for hidden layer
         self.bias_output = np.zeros(output_size)  # Bias for output layer
 
     def sigmoid(self, x):
+        x = np.clip(x, -500, 500)
         return 1 / (1 + np.exp(-x))
 
     def sigmoid_derivative(self, x):
         return x * (1 - x)
 
-    def train(self, training_inputs, training_outputs, iterations):
+    def train(self, training_inputs, training_outputs, iterations, learning_rate):
         errors = []
 
         for i in range(iterations):
@@ -38,12 +40,20 @@ class NeuralNetwork():
             hidden_output_error = final_output_delta.dot(self.weights_hidden_output.T)
             hidden_output_delta = hidden_output_error * self.sigmoid_derivative(hidden_output)
             
-            # Update weights and biases
-            self.weights_hidden_output += hidden_output.T.dot(final_output_delta)
-            self.weights_input_hidden += training_inputs.T.dot(hidden_output_delta)
+            # Update weights and biases with learning rate
+            self.weights_hidden_output += learning_rate * hidden_output.T.dot(final_output_delta)
+            self.weights_input_hidden += learning_rate * training_inputs.T.dot(hidden_output_delta)
             
-            self.bias_output += np.sum(final_output_delta, axis=0)
-            self.bias_hidden += np.sum(hidden_output_delta, axis=0)
+            self.bias_output += learning_rate * np.sum(final_output_delta, axis=0)
+            self.bias_hidden += learning_rate * np.sum(hidden_output_delta, axis=0)
+
+        # Plot the error over time after training
+        plt.plot(errors)
+        plt.xlabel('Training Iterations')
+        plt.ylabel('Mean Absolute Error')
+        plt.title('Training Error Over Time')
+        plt.show()
+
 
         # Plot the error over time after training
         plt.plot(errors)

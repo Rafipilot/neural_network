@@ -23,7 +23,7 @@ training_outputs = np.array([[0],
 q = 2
 neural_network = NeuralNetwork(training_inputs, training_outputs, q)
 
-neural_network.train(training_inputs, training_outputs, 20000)
+neural_network.train(training_inputs, training_outputs, 20000,  learning_rate = 1)
 
 while True:
     binary_string = str(input("Input: "))
