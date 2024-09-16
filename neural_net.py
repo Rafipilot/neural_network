@@ -11,7 +11,6 @@ class NeuralNetwork():
         # Initialize weights randomly with mean 0
         self.weights_input_hidden = np.random.randn(input_size, q) * np.sqrt(1. / input_size)
         self.weights_hidden_output = np.random.randn(q, output_size) * np.sqrt(1. / q)
-  # Weights between hidden and output layer
         
         self.bias_hidden = np.zeros(q)  # Bias for hidden layer
         self.bias_output = np.zeros(output_size)  # Bias for output layer
@@ -22,13 +21,19 @@ class NeuralNetwork():
 
     def sigmoid_derivative(self, x):
         return x * (1 - x)
+    
+    def relu(self, x):
+        return np.maximum(0, x)
+    
+    def relu_derivative(self, x):
+        return np.where(x > 0, 1, 0)
 
     def train(self, training_inputs, training_outputs, iterations, learning_rate):
         errors = []
 
         for i in range(iterations):
-            # Forward pass
-            hidden_output = self.sigmoid(np.dot(training_inputs, self.weights_input_hidden) + self.bias_hidden)
+            # Forward pass using ReLU for the hidden layer
+            hidden_output = self.relu(np.dot(training_inputs, self.weights_input_hidden) + self.bias_hidden)
             final_output = self.sigmoid(np.dot(hidden_output, self.weights_hidden_output) + self.bias_output)
             
             # Calculate error
@@ -38,7 +43,7 @@ class NeuralNetwork():
             # Backward pass
             final_output_delta = error * self.sigmoid_derivative(final_output)
             hidden_output_error = final_output_delta.dot(self.weights_hidden_output.T)
-            hidden_output_delta = hidden_output_error * self.sigmoid_derivative(hidden_output)
+            hidden_output_delta = hidden_output_error * self.relu_derivative(hidden_output)
             
             # Update weights and biases with learning rate
             self.weights_hidden_output += learning_rate * hidden_output.T.dot(final_output_delta)
@@ -54,23 +59,8 @@ class NeuralNetwork():
         plt.title('Training Error Over Time')
         plt.show()
 
-
-        # Plot the error over time after training
-        plt.plot(errors)
-        plt.xlabel('Training Iterations')
-        plt.ylabel('Mean Absolute Error')
-        plt.title('Training Error Over Time')
-        plt.show()
-
     def think(self, inputs):
         inputs = inputs.astype(float)
-        hidden_output = self.sigmoid(np.dot(inputs, self.weights_input_hidden) + self.bias_hidden)
+        hidden_output = self.relu(np.dot(inputs, self.weights_input_hidden) + self.bias_hidden)
         final_output = self.sigmoid(np.dot(hidden_output, self.weights_hidden_output) + self.bias_output)
         return final_output
-
-
-    
-
-
-
-

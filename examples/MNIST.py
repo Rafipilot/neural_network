@@ -26,8 +26,17 @@ hidden_neurons = 70
 nn = NeuralNetwork(train_images, train_labels, hidden_neurons)
 
 # Train the neural network
-nn.train(train_images, train_labels, iterations=200, learning_rate=0.000026)
-
+nn.train(train_images, train_labels, iterations=50, learning_rate=0.000026)
+for i in range(len(test_images)):#
+    show = input("show y/n: ")
+    if  show  == "y": 
+        plt.imshow(test_images[i-1].reshape(28, 28), cmap="gray", interpolation="nearest")
+        plt.title("First Test Image")
+        plt.show()
+        predictions = nn.think(test_images[i-1])
+    else:
+        break
+    print(np.argmax(predictions))
 # Evaluate the neural network
 predictions = nn.think(test_images)
 accuracy = np.mean(np.argmax(predictions, 
