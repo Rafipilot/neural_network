@@ -34,10 +34,11 @@ pip install git+https://github.com/Rafipilot/Rafi_neural_network
 You can initialize the neural network by providing the structure of the network (i.e., number of neurons in each layer) and specifying the activation function for the hidden and output layers.
 
 ```python
-from NeuralNetwork import NeuralNetwork
+import neural_network.neural_net as neural_net
 
-# Example: Neural Network with 3 layers (input, one hidden, and output)
-nn = NeuralNetwork(layer_sizes=[3, 5, 1], activation='relu', output_activation='sigmoid')
+
+# Initialize the network
+nn = neural_net.NeuralNetwork(layer_sizes=[3, 5, 1], activation='relu', output_activation='sigmoid')
 ```
 
 layer_sizes: List where each value represents the number of neurons in each layer.
@@ -81,8 +82,11 @@ print(f"Prediction for {new_input}: {output}")
 Here is an example of using the neural network:
 
 ```python
+import neural_network.neural_net as neural_net
+
+
 # Initialize the network
-nn = NeuralNetwork(layer_sizes=[3, 5, 1], activation='relu', output_activation='sigmoid')
+nn = neural_net.NeuralNetwork(layer_sizes=[3, 5, 1], activation='relu', output_activation='sigmoid')
 
 # Training data
 training_inputs = [[0, 0, 1], [1, 1, 1], [1, 0, 1], [0, 1, 1]]
@@ -92,7 +96,7 @@ training_outputs = [[0], [1], [1], [0]]
 nn.train(training_inputs, training_outputs, iterations=10000, learning_rate=0.01)
 
 # Make a prediction
-new_input = [1, 0, 0]
+new_input = [1, 0, 1]
 output = nn.think(new_input)
 print(f"Prediction for {new_input}: {output}")
 ```
