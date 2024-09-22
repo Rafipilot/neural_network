@@ -12,6 +12,13 @@ This project is an implementation of a simple feedforward neural network using P
 
 ## Installation
 
+### 1. Pip install 
+
+```powershell
+pip install git+https://github.com/Rafipilot/Rafi_neural_network
+```
+
+### 2. Download repo
 1. Ensure you have Python installed on your system (version 3.x is recommended).
 2. Clone or download this repository.
 3. Install the required libraries by running:
