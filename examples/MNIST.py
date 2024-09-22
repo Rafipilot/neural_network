@@ -25,7 +25,7 @@ test_labels = np.eye(10)[test_labels]
 x, input_size = np.shape(train_images) # getting the shape of input
 y, output_size = np.shape(train_labels) # getting shape of output
 
-layer_sizes = [input_size, 70, output_size]  
+layer_sizes = [input_size, 70, 70,  output_size]  
 
 # Initialize the neural network
 nn = NeuralNetwork(layer_sizes, activation='relu', output_activation='sigmoid')
