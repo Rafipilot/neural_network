@@ -91,7 +91,7 @@ class NeuralNetwork:
             error = training_outputs - activations[-1]
             errors.append(np.mean(np.abs(error)))
             
-            if i % 50 == 0:
+            if i % 5 == 0:
                 print(f"Iteration {i}, Error: {errors[-1]}")
             
             # Backpropagation

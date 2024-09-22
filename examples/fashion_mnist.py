@@ -1,5 +1,5 @@
 import numpy as np
-from tensorflow.keras.datasets import mnist  # just using tensorflow for the mnist dataset
+from tensorflow.keras.datasets import fashion_mnist  # Use fashion_mnist instead of mnist
 import matplotlib.pyplot as plt
 
 import sys
@@ -9,10 +9,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from neural_net import NeuralNetwork  # Ensure this refers to the updated NeuralNetwork class
 
-# Load MNIST dataset
-(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
-
-
+# Load Fashion MNIST dataset
+(train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()  # Load fashion_mnist
 
 # Reshape the images to 2D array (num_samples, num_features) and normalize
 train_images = train_images.reshape(-1, 28 * 28) / 255.0
@@ -25,13 +23,13 @@ test_labels = np.eye(10)[test_labels]
 x, input_size = np.shape(train_images) # getting the shape of input
 y, output_size = np.shape(train_labels) # getting shape of output
 
-layer_sizes = [input_size, 270, 270,  output_size]  
+layer_sizes = [input_size, 270, 270,  output_size]  #4 layers: 
 
 # Initialize the neural network
 nn = NeuralNetwork(layer_sizes, activation='relu', output_activation='sigmoid')
 
 # Train the neural network
-nn.train(train_images, train_labels, iterations=50, learning_rate=0.000026)
+nn.train(train_images, train_labels, iterations=150, learning_rate=0.0000026)
 
 # Optional: Visualize a few test images and their predictions
 num_visualizations = 5
@@ -45,6 +43,5 @@ for i in range(num_visualizations):
 
 # Evaluate the neural network on the entire test set
 predictions = nn.think(test_images)
-accuracy = np.mean(np.argmax(predictions, 
-axis=1) == np.argmax(test_labels, axis=1))
+accuracy = np.mean(np.argmax(predictions, axis=1) == np.argmax(test_labels, axis=1))
 print(f'Test accuracy: {accuracy * 100:.2f}%')
