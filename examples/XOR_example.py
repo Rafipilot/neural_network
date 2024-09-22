@@ -6,7 +6,7 @@ import os
 # Add the parent directory to the sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from neural_net import NeuralNetwork
+from neural_network.neural_net import NeuralNetwork
 
 # Training dataset: 
 training_inputs = np.array([[1, 1], 
