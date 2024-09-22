@@ -2,197 +2,123 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class NeuralNetwork:
-    def __init__(self, layer_sizes, activation_hidden='relu', activation_output='sigmoid'):
+    def __init__(self, layer_sizes, activation='relu', output_activation='sigmoid'):
         """
-        Initializes the neural network with a given architecture.
-
-        Parameters:
-        - layer_sizes: List of integers specifying the number of neurons in each layer,
-                       including input and output layers.
-                       Example: [2, 3, 2, 1] represents a network with:
-                           - 2 input neurons
-                           - 3 neurons in the first hidden layer
-                           - 2 neurons in the second hidden layer
-                           - 1 output neuron
-        - activation_hidden: Activation function for hidden layers ('relu' or 'sigmoid').
-        - activation_output: Activation function for the output layer ('sigmoid' or 'relu').
+        Initialize the neural network.
+        
+        :param layer_sizes: List of integers representing the number of neurons in each layer.
+                            Example: [input_size, hidden1_size, hidden2_size, ..., output_size]
+        :param activation: Activation function for hidden layers ('relu' or 'sigmoid').
+        :param output_activation: Activation function for the output layer ('sigmoid', 'softmax', etc.).
         """
         self.layer_sizes = layer_sizes
         self.num_layers = len(layer_sizes)
-        self.activation_hidden = activation_hidden
-        self.activation_output = activation_output
+        self.activation = activation
+        self.output_activation = output_activation
+        
+        np.random.seed(1)  # For reproducibility
         
         # Initialize weights and biases
         self.weights = []
         self.biases = []
-        np.random.seed(1)  # For reproducibility
-
-        for i in range(1, self.num_layers):
-            input_size = layer_sizes[i-1]
-            output_size = layer_sizes[i]
-            # He initialization for ReLU, Xavier for Sigmoid
-            if (i != self.num_layers -1 and activation_hidden == 'relu') or (i == self.num_layers -1 and activation_output == 'relu'):
-                weight = np.random.randn(input_size, output_size) * np.sqrt(2. / input_size)
-            else:
-                weight = np.random.randn(input_size, output_size) * np.sqrt(1. / input_size)
+        for i in range(self.num_layers - 1):
+            weight = np.random.randn(layer_sizes[i], layer_sizes[i + 1]) * np.sqrt(1. / layer_sizes[i])
+            bias = np.zeros(layer_sizes[i + 1])
             self.weights.append(weight)
-            self.biases.append(np.zeros(output_size))
-
+            self.biases.append(bias)
+    
     def sigmoid(self, x):
-        """Sigmoid activation function."""
-        x = np.clip(x, -500, 500)  # Prevent overflow
+        x = np.clip(x, -500, 500)
         return 1 / (1 + np.exp(-x))
-
+    
     def sigmoid_derivative(self, x):
-        """Derivative of the sigmoid function."""
         return x * (1 - x)
-
+    
     def relu(self, x):
-        """ReLU activation function."""
         return np.maximum(0, x)
-
+    
     def relu_derivative(self, x):
-        """Derivative of the ReLU function."""
         return np.where(x > 0, 1, 0)
     
-    def softmax():
-        pass
-
-    def forward_pass(self, inputs):
-        """
-        Performs a forward pass through the network.
-
-        Parameters:
-        - inputs: Input data as a NumPy array.
-
-        Returns:
-        - activations: List of activations for each layer.
-        """
-        activations = [inputs]
-        for i in range(self.num_layers - 1):
-            z = np.dot(activations[-1], self.weights[i]) + self.biases[i]
-            if i < self.num_layers - 2:
-                # Hidden layers
-                if self.activation_hidden == 'relu':
-                    a = self.relu(z)
-                elif self.activation_hidden == 'sigmoid':
-                    a = self.sigmoid(z)
-                else:
-                    raise ValueError("Unsupported activation function for hidden layers.")
+    def activate(self, x, layer):
+        if layer == self.num_layers - 2:  # Output layer
+            if self.output_activation == 'sigmoid':
+                return self.sigmoid(x)
+            elif self.output_activation == 'relu':
+                return self.relu(x)
             else:
-                # Output layer
-                if self.activation_output == 'sigmoid':
-                    a = self.sigmoid(z)
-                elif self.activation_output == 'relu':
-                    a = self.relu(z)
-                else:
-                    raise ValueError("Unsupported activation function for output layer.")
-            activations.append(a)
-        return activations
-
-    def backpropagate(self, activations, training_outputs, learning_rate):
-        """
-        Performs backpropagation and updates the weights and biases.
-
-        Parameters:
-        - activations: List of activations from the forward pass.
-        - training_outputs: True output values.
-        - learning_rate: Learning rate for weight updates.
-        """
-        # Initialize list to store deltas
-        deltas = [None] * (self.num_layers -1)
-
-        # Compute delta for output layer
-        error = training_outputs - activations[-1]
-        if self.activation_output == 'sigmoid':
-            delta = error * self.sigmoid_derivative(activations[-1])
-        elif self.activation_output == 'relu':
-            delta = error * self.relu_derivative(activations[-1])
-        deltas[-1] = delta
-
-        # Compute deltas for hidden layers (in reverse order)
-        for i in reversed(range(self.num_layers - 2)):
-            if self.activation_hidden == 'relu':
-                delta = deltas[i+1].dot(self.weights[i+1].T) * self.relu_derivative(activations[i+1])
-            elif self.activation_hidden == 'sigmoid':
-                delta = deltas[i+1].dot(self.weights[i+1].T) * self.sigmoid_derivative(activations[i+1])
-            deltas[i] = delta
-
-        # Update weights and biases
-        for i in range(self.num_layers -1):
-            layer_input = activations[i]
-            delta = deltas[i]
-            # Update weights
-            self.weights[i] += learning_rate * np.dot(layer_input.T, delta)
-            # Update biases
-            self.biases[i] += learning_rate * np.sum(delta, axis=0)
-
+                raise NotImplementedError("Output activation not implemented.")
+        else:  # Hidden layers
+            if self.activation == 'relu':
+                return self.relu(x)
+            elif self.activation == 'sigmoid':
+                return self.sigmoid(x)
+            else:
+                raise NotImplementedError("Activation function not implemented.")
+    
+    def activate_derivative(self, activated, layer):
+        if layer == self.num_layers - 2:  # Output layer
+            if self.output_activation == 'sigmoid':
+                return self.sigmoid_derivative(activated)
+            elif self.output_activation == 'relu':
+                return self.relu_derivative(activated)
+            else:
+                raise NotImplementedError("Output activation derivative not implemented.")
+        else:  # Hidden layers
+            if self.activation == 'relu':
+                return self.relu_derivative(activated)
+            elif self.activation == 'sigmoid':
+                return self.sigmoid_derivative(activated)
+            else:
+                raise NotImplementedError("Activation derivative not implemented.")
+    
     def train(self, training_inputs, training_outputs, iterations, learning_rate):
-        """
-        Trains the neural network using the provided training data.
-
-        Parameters:
-        - training_inputs: Input data as a NumPy array.
-        - training_outputs: True output values as a NumPy array.
-        - iterations: Number of training iterations.
-        - learning_rate: Learning rate for weight updates.
-        """
         errors = []
+        training_inputs = np.array(training_inputs)
+        training_outputs = np.array(training_outputs)
+        
         for i in range(iterations):
             # Forward pass
-            activations = self.forward_pass(training_inputs)
-            output = activations[-1]
-
-            # Compute error
-            error = training_outputs - output
-            mean_error = np.mean(np.abs(error))
-            errors.append(mean_error)
-
-            # Print error every 1000 iterations
-            if (i % 1000 == 0) or (i == iterations -1):
-                print(f"Iteration {i+1}/{iterations}, Error: {mean_error}")
-
+            activations = [training_inputs]
+            pre_activations = []
+            for l in range(self.num_layers - 1):
+                z = np.dot(activations[-1], self.weights[l]) + self.biases[l]
+                pre_activations.append(z)
+                a = self.activate(z, l)
+                activations.append(a)
+            
+            # Compute error at output
+            error = training_outputs - activations[-1]
+            errors.append(np.mean(np.abs(error)))
+            
+            if i % 5 == 0:
+                print(f"Iteration {i}, Error: {errors[-1]}")
+            
             # Backpropagation
-            self.backpropagate(activations, training_outputs, learning_rate)
-
+            deltas = [None] * (self.num_layers - 1)
+            # Output layer delta
+            deltas[-1] = error * self.activate_derivative(activations[-1], self.num_layers - 2)
+            
+            # Hidden layers delta
+            for l in range(self.num_layers - 3, -1, -1):
+                deltas[l] = deltas[l + 1].dot(self.weights[l + 1].T) * self.activate_derivative(activations[l + 1], l)
+            
+            # Update weights and biases
+            for l in range(self.num_layers - 1):
+                layer_input = activations[l]
+                delta = deltas[l]
+                self.weights[l] += learning_rate * layer_input.T.dot(delta)
+                self.biases[l] += learning_rate * np.sum(delta, axis=0)
+        
         # Plot the error over time after training
         plt.plot(errors)
         plt.xlabel('Training Iterations')
         plt.ylabel('Mean Absolute Error')
         plt.title('Training Error Over Time')
-        plt.grid(True)
         plt.show()
-
-    def think(self, inputs):
-        """
-        Performs a forward pass and returns the network's output.
-
-        Parameters:
-        - inputs: Input data as a NumPy array.
-
-        Returns:
-        - final_output: Network's output.
-        """
-        activations = self.forward_pass(inputs)
-        return activations[-1]
     
-    def think_batch(self, inputs, batch_size=1000):
-        """
-        Performs a forward pass on the input data in batches.
-
-        Parameters:
-        - inputs: Input data as a NumPy array.
-        - batch_size: Number of samples to process at a time.
-
-        Returns:
-        - final_output: Network's output for all inputs.
-        """
-        num_samples = inputs.shape[0]
-        final_output = []
-        for start in range(0, num_samples, batch_size):
-            end = start + batch_size
-            batch_inputs = inputs[start:end]
-            batch_output = self.forward_pass(batch_inputs)[-1]
-            final_output.append(batch_output)
-        return np.vstack(final_output)
-
+    def think(self, inputs):
+        inputs = np.array(inputs).astype(float)
+        for l in range(self.num_layers - 1):
+            inputs = self.activate(np.dot(inputs, self.weights[l]) + self.biases[l], l)
+        return inputs
