@@ -5,9 +5,7 @@ import matplotlib.pyplot as plt
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from neural_network.neural_net import NeuralNetwork  # Ensure this refers to the updated NeuralNetwork class
+from neural_network.neural_net import NeuralNetwork  
 
 # Load MNIST dataset
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
