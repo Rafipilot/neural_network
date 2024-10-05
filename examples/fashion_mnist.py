@@ -2,12 +2,7 @@ import numpy as np
 from tensorflow.keras.datasets import fashion_mnist  # Use fashion_mnist instead of mnist
 import matplotlib.pyplot as plt
 
-import sys
-import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from neural_net import NeuralNetwork  # Ensure this refers to the updated NeuralNetwork class
+from neural_network.neural_net import NeuralNetwork  # Ensure this refers to the updated NeuralNetwork class
 
 # Load Fashion MNIST dataset
 (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()  # Load fashion_mnist
@@ -23,7 +18,7 @@ test_labels = np.eye(10)[test_labels]
 x, input_size = np.shape(train_images) # getting the shape of input
 y, output_size = np.shape(train_labels) # getting shape of output
 
-layer_sizes = [input_size, 270, 270,  output_size]  #4 layers: 
+layer_sizes = [input_size, 270, 270,270,  output_size]  #5 layers, 3 hidden 
 
 # Initialize the neural network
 nn = NeuralNetwork(layer_sizes, activation='relu', output_activation='sigmoid')
