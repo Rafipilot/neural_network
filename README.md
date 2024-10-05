@@ -11,7 +11,7 @@ This project is an implementation of a simple feedforward neural network using P
 - Visualization of training error over time.
 
 ## Installation
-
+#### You can either pip install the package or just download the repo!
 ### 1. Pip install 
 
 ```powershell
