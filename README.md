@@ -15,7 +15,7 @@ This project is an implementation of a simple feedforward neural network using P
 ### 1. Pip install 
 
 ```powershell
-pip install git+https://github.com/Rafipilot/Rafi_neural_network
+pip install git+https://github.com/Rafipilot/neural_network
 ```
 
 ### 2. Download repo
