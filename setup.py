@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='embedding_bucketing',   # Name of your package
+    name='neural_network',   # Name of your package
     version='0.1.0',            # Version number
     packages=find_packages(),   # Automatically find all packages in the source folder
     install_requires=[
