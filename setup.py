@@ -5,7 +5,7 @@ setup(
     version='0.1.0',            # Version number
     packages=find_packages(),   # Automatically find all packages in the source folder
     install_requires=[
-        'numpy==2.1.1',
+        'numpy==1.26.4',
         'openai==1.44.1',
         'scikit-learn==1.5.1'
     ],        # List your project dependencies here
