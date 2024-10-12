@@ -9,7 +9,7 @@ class NeuralNetwork:
         :param layer_sizes: List of integers representing the number of neurons in each layer.
                             Example: [input_size, hidden1_size, hidden2_size, ..., output_size]
         :param activation: Activation function for hidden layers ('relu' or 'sigmoid').
-        :param output_activation: Activation function for the output layer ('sigmoid', 'softmax', etc.).
+        :param output_activation: Activation function for the output layer ('sigmoid', etc.).
         """
         # Store the size of each layer
         self.layer_sizes = layer_sizes
