@@ -1,5 +1,5 @@
 matplotlib==3.9.2
-numpy==2.1.1
+numpy==1.26.4
 streamlit==1.35.0
 tensorflow==2.16.1
 tensorflow_intel==2.16.1
